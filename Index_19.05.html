@@ -1,0 +1,216 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danish Learning App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 { text-align: center; }
+
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-top: 10px;
+      border-radius: 6px;
+    }
+
+    button {
+      border: none;
+      background-color: #0078d4;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover { background-color: #005ea2; }
+
+
+    .status {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #444;
+    }
+
+
+    .output {
+      display: none;
+      margin-top: 10px;
+      padding: 10px;
+      background: #eef3f8;
+      border-radius: 6px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Danish Writing Helper</h1>
+
+    <label>Correction mode:</label>
+    <select id="mode">
+      <option>Gentle teacher</option>
+      <option>Normal teacher</option>
+      <option>Strict correction</option>
+      <option>PD3 exam mode</option>
+    </select>
+
+    <label>Focus options:</label>
+    <label><input type="checkbox" id="importantOnly"> Only the most important mistakes</label>
+
+    <label>Style:</label>
+    <select id="style">
+      <option>Written Danish</option>
+      <option>Spoken Danish</option>
+    </select>
+
+    <label>Learning focus:</label>
+    <select id="focus">
+      <option>Grammar accuracy</option>
+      <option>Natural spoken Danish</option>
+      <option>Written structure</option>
+      <option>PD3 exam preparation</option>
+      <option>Vocabulary and expressions</option>
+    </select>
+
+
+    <label>Danish Writing Task:</label>
+    <textarea id="task"></textarea>
+
+    <label>Your Answer (in Danish):</label>
+    <textarea id="answer"></textarea>
+
+    <button onclick="generatePrompt()">Generate teacher prompt</button>
+    <button onclick="copyPrompt()">Copy Prompt</button>
+    <button onclick="togglePrompt()">Show / Hide Prompt</button>
+
+
+    <div id="preview" class="status"></div>
+    <div id="status" class="status"></div>
+    <div class="output" id="output"></div>
+  </div>
+
+  <script>
+    let prompt = "";
+
+
+    function generatePrompt() {
+      const task = document.getElementById('task').value;
+      const answer = document.getElementById('answer').value;
+      const mode = document.getElementById('mode').value;
+      const importantOnly = document.getElementById('importantOnly').checked;
+      const style = document.getElementById('style').value;
+      const focus = document.getElementById('focus').value;
+
+
+      let modeInstruction = "";
+
+      if (mode === "Gentle teacher") {
+        modeInstruction = "Be very supportive, highlight positives, correct softly.";
+      } else if (mode === "Normal teacher") {
+        modeInstruction = "Balance corrections and encouragement.";
+      } else if (mode === "Strict correction") {
+        modeInstruction = "Focus strongly on errors and precise corrections.";
+      } else if (mode === "PD3 exam mode") {
+        modeInstruction = "Focus on exam readiness, clarity, and PD3 expectations.";
+      }
+
+      prompt = `Act as a Danish teacher for an adult learner at DU3 Module 3 level, working toward PD3.
+Mode: ${mode}.
+${modeInstruction}
+
+
+Here is the writing assignment:
+${task}
+
+Here is the student's answer:
+${answer}
+
+Follow these rules:
+- Keep the learner's original style whenever possible
+- Do NOT rewrite everything into overly advanced Danish
+- Explain WHY something is wrong (simple explanation in Polish)
+
+${style === 'Spoken Danish' ? '- Focus on natural spoken Danish, simple flow, and pronunciation-friendly phrases' : '- Focus on correct written Danish: grammar, word order, connectors, and clear structure'}
+${importantOnly ? '- Focus ONLY on the most important, recurring, or blocking mistakes (ignore small details)' : '- Include both major and minor mistakes where helpful'}
+
+${focus === 'Grammar accuracy' ? '- Prioritise grammatical correctness and clear rules' : ''}
+${focus === 'Natural spoken Danish' ? '- Prioritise natural, everyday spoken Danish expressions' : ''}
+${focus === 'Written structure' ? '- Prioritise clear structure, connectors, and paragraph organisation' : ''}
+${focus === 'PD3 exam preparation' ? '- Prioritise PD3 exam criteria: clarity, argumentation, and correctness' : ''}
+${focus === 'Vocabulary and expressions' ? '- Prioritise improving vocabulary and useful expressions' : ''}
+
+STRUCTURED FEEDBACK (use clear headings and sections):
+
+IMPORTANT: Format the entire response in **Markdown**.
+
+### 1. Necessary corrections
+### 2. Better natural Danish
+### 3. PD3 upgrade
+### 4. Grammar explanation in simple Polish
+### 5. Useful expressions and phrases
+### 6. Personalised follow-up exercises
+### 7. Recurring error tracking
+### 8. PD3 scoring hint
+### 9. Model Answer (short)
+
+
+Follow this structure strictly.
+
+Additional instructions for section 9 (Model Answer):
+- Write a short model answer (maximum 3–5 sentences)
+- Use realistic PD3-level Danish
+- Keep it natural and clear (not overly academic)
+- Make it feel achievable for a learner moving from DU3 toward PD3
+- Use useful connectors and natural sentence flow
+- Focus on good structure rather than difficult vocabulary
+- Present this section clearly in Markdown like the other sections (with heading and clean paragraph)
+`;
+
+      document.getElementById('preview').textContent = `Mode: ${mode} | Style: ${style} | Focus: ${focus}${importantOnly ? ' | Important mistakes only' : ''}`;
+      document.getElementById('status').textContent = "✅ Prompt ready";
+      document.getElementById('output').textContent = prompt;
+    }
+
+
+    function copyPrompt() {
+      navigator.clipboard.writeText(prompt);
+      alert('Prompt copied!');
+    }
+
+
+    function togglePrompt() {
+      const output = document.getElementById('output');
+      output.style.display = output.style.display === 'none' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>
