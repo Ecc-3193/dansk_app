@@ -103,10 +103,10 @@
 
 
     <label>Danish Writing Task:</label>
-    <textarea id="task"></textarea>
+    <textarea id="task" oninput="saveDraft()"></textarea>
 
     <label>Your Answer (in Danish):</label>
-    <textarea id="answer"></textarea>
+   <textarea id="answer" oninput="saveDraft()"></textarea>
 
     <button onclick="generatePrompt()">Generate teacher prompt</button>
     <button onclick="copyPrompt()">Copy Prompt</button>
@@ -212,6 +212,15 @@ Additional instructions for section 9 (Model Answer):
       const output = document.getElementById('output');
       output.style.display = output.style.display === 'none' ? 'block' : 'none';
     }
-  </script>
+  function saveDraft() {
+  localStorage.setItem('dansk_task', document.getElementById('task').value);
+  localStorage.setItem('dansk_answer', document.getElementById('answer').value);
+}
+
+window.addEventListener('load', function() {
+  document.getElementById('task').value = localStorage.getItem('dansk_task') || '';
+  document.getElementById('answer').value = localStorage.getItem('dansk_answer') || '';
+});
+  </script>
 </body>
 </html>
