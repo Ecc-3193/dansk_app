@@ -202,8 +202,9 @@ Additional instructions for section 9 (Model Answer):
 
 
     function copyPrompt() {
-      navigator.clipboard.writeText(prompt);
-      alert('Prompt copied!');
+  const output = document.getElementById('output').textContent;
+  navigator.clipboard.writeText(output);
+  alert('Prompt copied!');
     }
 
 
