@@ -204,7 +204,7 @@ Additional instructions for section 9 (Model Answer):
       document.getElementById('status').textContent = "✅ Prompt ready";
       document.getElementById('output').textContent = prompt;
     }
-
+saveToHistory(prompt);
 
     function copyPrompt() {
   const output = document.getElementById('output').textContent;
