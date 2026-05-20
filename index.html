@@ -226,6 +226,41 @@ window.addEventListener('load', function() {
   document.getElementById('task').value = localStorage.getItem('dansk_task') || '';
   document.getElementById('answer').value = localStorage.getItem('dansk_answer') || '';
 });
+    function exportData() {
+  const data = {
+    task: document.getElementById('task').value,
+    answer: document.getElementById('answer').value
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(data, null, 2)],
+    { type: 'application/json' }
+  );
+
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'dansk-helper-backup.json';
+  link.click();
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    const data = JSON.parse(e.target.result);
+
+    document.getElementById('task').value = data.task || '';
+    document.getElementById('answer').value = data.answer || '';
+
+    saveDraft();
+    alert('Data imported!');
+  };
+
+  reader.readAsText(file);
+}
   </script>
 </body>
 </html>
