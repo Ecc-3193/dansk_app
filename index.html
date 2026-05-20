@@ -283,7 +283,7 @@ function renderHistory() {
     container.id = 'history';
 
     const heading = document.createElement('h3');
-    heading.textContent = 'Prompt History';
+   heading.textContent = 'Writing History';
 
     document.body.appendChild(heading);
     document.body.appendChild(container);
@@ -300,12 +300,17 @@ function renderHistory() {
     div.style.borderRadius = '10px';
 
     div.innerHTML = `
-      <strong>Prompt ${index + 1}</strong><br><br>
-      <button onclick="navigator.clipboard.writeText(\`${item.replace(/`/g, '\\`')}\`)">
-        Copy
-      </button>
-      <pre style="white-space: pre-wrap;">${item}</pre>
-    `;
+  <strong>Writing ${index + 1}</strong><br><br>
+
+  <button onclick="navigator.clipboard.writeText(\`${item.replace(/`/g, '\\`')}\`)">
+    Copy
+  </button>
+
+  <div style="margin-top:10px; white-space: pre-wrap;">
+    ${item.substring(0, 300)}...
+  </div>
+`;
+    
 
     container.appendChild(div);
   });
