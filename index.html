@@ -111,8 +111,13 @@
     <button onclick="generatePrompt()">Generate teacher prompt</button>
     <button onclick="copyPrompt()">Copy Prompt</button>
     <button onclick="togglePrompt()">Show / Hide Prompt</button>
+<button onclick="exportData()">Export Data</button>
 
+<input type="file" id="importFile" style="display:none" onchange="importData(event)">
 
+<button onclick="document.getElementById('importFile').click()">
+Import Data
+</button>
     <div id="preview" class="status"></div>
     <div id="status" class="status"></div>
     <div class="output" id="output"></div>
