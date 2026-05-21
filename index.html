@@ -468,6 +468,7 @@ Additional instructions for section 9 (Model Answer):
       document.getElementById('preview').textContent = `Mode: ${mode} | Style: ${style} | Focus: ${focus}${importantOnly ? ' | Important mistakes only' : ''}`;
       document.getElementById('status').textContent = "✅ Prompt ready";
       document.getElementById('output').textContent = prompt;
+      showTags(mode, style, focus, importantOnly);
       saveWritingHistory();
     }
 
