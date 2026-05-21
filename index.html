@@ -380,6 +380,132 @@
       line-height: 1.35;
     }
 
+
+    .learning-panel {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--soft);
+      display: none;
+    }
+
+    .learning-panel h3 {
+      margin: 0 0 6px;
+      font-size: 17px;
+    }
+
+    .learning-panel p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .learning-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .learning-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--card);
+      padding: 12px;
+    }
+
+    .learning-card strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .learning-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .learning-tip {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+
+
+    .dictionary-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .dictionary-tools input,
+    .dictionary-tools select {
+      flex: 1 1 220px;
+      margin-top: 0;
+    }
+
+    .dictionary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .dictionary-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--soft);
+      padding: 14px;
+    }
+
+    .dictionary-card strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .dictionary-card .translation {
+      color: var(--muted);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .dictionary-card .example {
+      font-size: 14px;
+      line-height: 1.45;
+      margin: 8px 0;
+    }
+
+    .dictionary-card .note {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .dictionary-card .small-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .dictionary-card .small-actions button {
+      width: auto;
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+
     @media (max-width: 760px) {
       body {
         padding: 14px;
@@ -387,7 +513,9 @@
 
       .control-grid,
       .actions,
-      .feedback-grid {
+      .feedback-grid,
+      .learning-grid,
+      .dictionary-grid {
         grid-template-columns: 1fr;
       }
 
@@ -514,7 +642,58 @@
         <p>This shows what the teacher prompt will focus on when you paste it into ChatGPT.</p>
         <div id="feedbackCards" class="feedback-grid"></div>
       </div>
+
+      <div id="learningPanel" class="learning-panel">
+        <h3>Learning Tools</h3>
+        <p>A small teacher notebook: words, expressions, grammar focus and mini exercises to use after feedback.</p>
+        <div class="learning-grid">
+          <div class="learning-card">
+            <strong>📚 Vocabulary to Learn</strong>
+            <ul id="learnVocabulary"></ul>
+          </div>
+          <div class="learning-card">
+            <strong>🗣 Useful Expressions</strong>
+            <ul id="learnExpressions"></ul>
+          </div>
+          <div class="learning-card">
+            <strong>✍️ Grammar Focus</strong>
+            <ul id="learnGrammar"></ul>
+          </div>
+          <div class="learning-card">
+            <strong>🔁 Suggested Exercises</strong>
+            <ul id="learnExercises"></ul>
+          </div>
+        </div>
+        <div class="learning-tip"><strong>🎯 PD3 Improvement Tip:</strong> <span id="learnTip"></span></div>
+      </div>
       <div class="output" id="output"></div>
+    </section>
+
+
+
+    <section class="panel">
+      <h2>Dictionary & Expressions</h2>
+      <p class="status">Search useful DU3/PD3 words and expressions. You can copy or insert them into your Danish text.</p>
+
+      <div class="dictionary-tools">
+        <input type="text" id="dictionarySearch" placeholder="Search Danish, Polish, category..." oninput="renderDictionary()" />
+        <select id="dictionaryType" onchange="renderDictionary()">
+          <option value="all">Words + expressions</option>
+          <option value="word">Words only</option>
+          <option value="expression">Expressions only</option>
+        </select>
+        <select id="dictionaryCategory" onchange="renderDictionary()">
+          <option value="all">All categories</option>
+          <option value="Arbejde">Arbejde</option>
+          <option value="Sprog">Sprog</option>
+          <option value="Bolig">Bolig</option>
+          <option value="Hverdag">Hverdag</option>
+          <option value="Argumentation">Argumentation</option>
+          <option value="PD3">PD3</option>
+        </select>
+      </div>
+
+      <div id="dictionaryList" class="dictionary-grid"></div>
     </section>
 
     <section class="panel">
@@ -610,6 +789,7 @@ Additional instructions for section 9 (Model Answer):
       document.getElementById('output').textContent = prompt;
       showTags(mode, style, focus, importantOnly);
       showFeedbackCards(mode, style, focus, importantOnly);
+      showLearningTools(mode, style, focus, importantOnly);
       saveWritingHistory();
     }
 
@@ -793,6 +973,7 @@ function clearCurrentDraft() {
   document.getElementById('tags').innerHTML = '';
   document.getElementById('feedbackCards').innerHTML = '';
   document.getElementById('feedbackPanel').style.display = 'none';
+  document.getElementById('learningPanel').style.display = 'none';
   document.getElementById('output').textContent = '';
   saveDraft();
 }
@@ -827,6 +1008,91 @@ function insertLetter(letter) {
   saveDraft();
 }
 
+
+
+function setLearningList(id, items) {
+  const list = document.getElementById(id);
+  if (!list) return;
+
+  list.innerHTML = '';
+  items.forEach((item) => {
+    const li = document.createElement('li');
+    li.textContent = item;
+    list.appendChild(li);
+  });
+}
+
+function showLearningTools(mode, style, focus, importantOnly) {
+  const panel = document.getElementById('learningPanel');
+  if (!panel) return;
+
+  let vocabulary = ['tekst', 'sætning', 'eksempel'];
+  let expressions = ['jeg synes, at...', 'det er vigtigt at...', 'for eksempel'];
+  let grammar = ['Verb position in main clauses', 'Clear sentence endings'];
+  let exercises = ['Rewrite 2 sentences using fordi.', 'Write 2 new sentences with derfor.'];
+  let tip = 'Try to connect ideas clearly and keep each sentence simple enough to control.';
+
+  if (focus === 'Grammar accuracy') {
+    vocabulary = ['ordstilling', 'udsagnsord', 'hovedsætning', 'bisætning'];
+    expressions = ['fordi...', 'derfor...', 'selvom...'];
+    grammar = ['V2 word order', 'Word order after fordi/selvom', 'Verb placement with ikke/gerne'];
+    exercises = ['Correct 3 sentences with wrong word order.', 'Write 3 fordi-sentences and 3 derfor-sentences.'];
+    tip = 'For PD3, controlled grammar is more useful than very difficult vocabulary.';
+  }
+
+  if (focus === 'Natural spoken Danish') {
+    vocabulary = ['hverdag', 'samtale', 'udtale', 'mening'];
+    expressions = ['jeg vil sige, at...', 'det kommer an på...', 'jeg er ikke helt sikker, men...'];
+    grammar = ['Short spoken sentences', 'Natural question answers', 'Simple connectors'];
+    exercises = ['Say your text aloud once slowly.', 'Make 3 short spoken answers to the same topic.'];
+    tip = 'For speaking, natural flow and clear examples matter more than long sentences.';
+  }
+
+  if (focus === 'Written structure') {
+    vocabulary = ['indledning', 'argument', 'afslutning', 'sammenhæng'];
+    expressions = ['for det første', 'derudover', 'på den anden side', 'afslutningsvis'];
+    grammar = ['Paragraph structure', 'Connectors at the start of sentences', 'Clear progression'];
+    exercises = ['Divide your text into 2 short paragraphs.', 'Add 3 connectors without making sentences too long.'];
+    tip = 'A PD3 text needs a clear line of thought: start, examples, and a short conclusion.';
+  }
+
+  if (focus === 'PD3 exam preparation' || mode === 'PD3 exam mode') {
+    vocabulary = ['samfund', 'ansvar', 'muligheder', 'udfordring', 'erfaring'];
+    expressions = ['efter min mening', 'mange mener, at...', 'på den ene side', 'på den anden side'];
+    grammar = ['Argumentation structure', 'Balanced opinion', 'Examples that support your point'];
+    exercises = ['Write one argument for and one argument against.', 'Add one concrete example from everyday life.'];
+    tip = 'For PD3, show that you can explain your opinion and support it with examples.';
+  }
+
+  if (focus === 'Vocabulary and expressions') {
+    vocabulary = ['arbejdsplads', 'ansøgning', 'kollega', 'uddannelse', 'tradition'];
+    expressions = ['jeg har erfaring med...', 'jeg er interesseret i...', 'det kan være en fordel at...'];
+    grammar = ['Useful collocations', 'Prepositions in fixed expressions', 'Reusable sentence patterns'];
+    exercises = ['Use 5 useful expressions in your own sentences.', 'Make a mini glossary from today’s feedback.'];
+    tip = 'Learn expressions as small chunks, not as single isolated words.';
+  }
+
+  if (style === 'Spoken Danish') {
+    expressions.push('hvis jeg skal være ærlig');
+    exercises.push('Turn one written sentence into a spoken sentence.');
+  }
+
+  if (importantOnly) {
+    grammar = grammar.slice(0, 2);
+    exercises = exercises.slice(0, 2);
+    tip = 'Since priority mode is on, focus only on the few errors that block clarity.';
+  }
+
+  setLearningList('learnVocabulary', vocabulary);
+  setLearningList('learnExpressions', expressions);
+  setLearningList('learnGrammar', grammar);
+  setLearningList('learnExercises', exercises);
+
+  const tipEl = document.getElementById('learnTip');
+  if (tipEl) tipEl.textContent = tip;
+
+  panel.style.display = 'block';
+}
 
 function showFeedbackCards(mode, style, focus, importantOnly) {
   const panel = document.getElementById('feedbackPanel');
@@ -921,6 +1187,123 @@ function loadTheme() {
 
 window.addEventListener('load', loadTheme);
 
+
+const dictionaryItems = [
+  { type: 'word', category: 'Arbejde', da: 'en ansøgning', pl: 'aplikacja / podanie', example: 'Jeg skriver en ansøgning til en relevant stilling.', note: 'Useful for job-search texts.' },
+  { type: 'word', category: 'Arbejde', da: 'en stilling', pl: 'stanowisko', example: 'Jeg søger en stilling i Danmark.', note: 'Use with: at søge en stilling.' },
+  { type: 'word', category: 'Arbejde', da: 'erfaring', pl: 'doświadczenie', example: 'Jeg har erfaring med forskning og undervisning.', note: 'Often used without article.' },
+  { type: 'word', category: 'Arbejde', da: 'en arbejdsplads', pl: 'miejsce pracy', example: 'En god arbejdsplads har tydelig kommunikation.', note: 'Good PD3 workplace topic word.' },
+  { type: 'word', category: 'Sprog', da: 'udtale', pl: 'wymowa', example: 'Dansk udtale kan være svær.', note: 'Pronunciation.' },
+  { type: 'word', category: 'Sprog', da: 'ordstilling', pl: 'szyk wyrazów', example: 'Jeg skal øve dansk ordstilling.', note: 'Very important in Danish.' },
+  { type: 'word', category: 'Bolig', da: 'en lejlighed', pl: 'mieszkanie', example: 'Jeg bor i en lejlighed i Hellerup.', note: 'Common everyday word.' },
+  { type: 'word', category: 'Bolig', da: 'en nabo', pl: 'sąsiad / sąsiadka', example: 'Jeg taler nogle gange med min nabo.', note: 'Plural: naboer.' },
+  { type: 'word', category: 'Hverdag', da: 'hverdag', pl: 'codzienność', example: 'Min hverdag i Danmark er rolig.', note: 'Useful for personal texts.' },
+  { type: 'word', category: 'PD3', da: 'et argument', pl: 'argument', example: 'Et vigtigt argument er, at sproget hjælper i hverdagen.', note: 'Good for opinion writing.' },
+  { type: 'word', category: 'PD3', da: 'et samfund', pl: 'społeczeństwo', example: 'Et samfund har brug for tillid og ansvar.', note: 'Useful in social topics.' },
+
+  { type: 'expression', category: 'Arbejde', da: 'at lede efter et job', pl: 'szukać pracy', example: 'Jeg leder efter et job i Danmark.', note: 'Natural everyday phrase.' },
+  { type: 'expression', category: 'Arbejde', da: 'at søge en stilling', pl: 'aplikować na stanowisko', example: 'Jeg søger en stilling hos en biotech-virksomhed.', note: 'No “om” here.' },
+  { type: 'expression', category: 'Sprog', da: 'at øve sig', pl: 'ćwiczyć / trenować coś', example: 'Jeg øver mig i dansk hver dag.', note: 'Reflexive: jeg øver mig.' },
+  { type: 'expression', category: 'Sprog', da: 'for at kunne', pl: 'żeby móc', example: 'Jeg lærer dansk for at kunne tale med danskerne.', note: 'Very useful purpose structure.' },
+  { type: 'expression', category: 'Argumentation', da: 'efter min mening', pl: 'moim zdaniem', example: 'Efter min mening er netværk vigtigt.', note: 'Good for opinions.' },
+  { type: 'expression', category: 'Argumentation', da: 'på den ene side', pl: 'z jednej strony', example: 'På den ene side er sociale medier nyttige.', note: 'Use with “på den anden side”.' },
+  { type: 'expression', category: 'Argumentation', da: 'på den anden side', pl: 'z drugiej strony', example: 'På den anden side kan de tage meget tid.', note: 'Contrast expression.' },
+  { type: 'expression', category: 'Argumentation', da: 'derudover', pl: 'ponadto / oprócz tego', example: 'Derudover er det vigtigt at give eksempler.', note: 'At the beginning: V2 word order.' },
+  { type: 'expression', category: 'Argumentation', da: 'derfor', pl: 'dlatego', example: 'Derfor lærer jeg dansk hver dag.', note: 'Therefore + V2.' },
+  { type: 'expression', category: 'PD3', da: 'det afhænger af situationen', pl: 'to zależy od sytuacji', example: 'Det afhænger af situationen og af personens erfaring.', note: 'Useful when you need nuance.' },
+  { type: 'expression', category: 'PD3', da: 'mange mener, at...', pl: 'wiele osób uważa, że...', example: 'Mange mener, at virksomheder har et stort ansvar.', note: 'Good for introducing a general opinion.' },
+  { type: 'expression', category: 'PD3', da: 'jeg vil gerne fremhæve, at...', pl: 'chciałabym podkreślić, że...', example: 'Jeg vil gerne fremhæve, at sproget er vigtigt.', note: 'Slightly more advanced, but useful.' }
+];
+
+function normalizeDictionaryText(text) {
+  return String(text || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+
+function renderDictionary() {
+  const list = document.getElementById('dictionaryList');
+  if (!list) return;
+
+  const query = normalizeDictionaryText(document.getElementById('dictionarySearch')?.value || '');
+  const type = document.getElementById('dictionaryType')?.value || 'all';
+  const category = document.getElementById('dictionaryCategory')?.value || 'all';
+
+  const filtered = dictionaryItems.filter((item) => {
+    const haystack = normalizeDictionaryText(`${item.da} ${item.pl} ${item.example} ${item.note} ${item.category}`);
+    const typeOk = type === 'all' || item.type === type;
+    const categoryOk = category === 'all' || item.category === category;
+    const queryOk = !query || haystack.includes(query);
+    return typeOk && categoryOk && queryOk;
+  });
+
+  list.innerHTML = '';
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<p class="status">No matching words or expressions yet.</p>';
+    return;
+  }
+
+  filtered.forEach((item) => {
+    const card = document.createElement('div');
+    card.className = 'dictionary-card';
+
+    const title = document.createElement('strong');
+    title.textContent = item.da;
+
+    const translation = document.createElement('div');
+    translation.className = 'translation';
+    translation.textContent = item.pl;
+
+    const example = document.createElement('div');
+    example.className = 'example';
+    example.textContent = item.example;
+
+    const note = document.createElement('div');
+    note.className = 'note';
+    note.textContent = `${item.type === 'expression' ? 'Expression' : 'Word'} · ${item.category} · ${item.note}`;
+
+    const actions = document.createElement('div');
+    actions.className = 'small-actions';
+
+    const insertButton = document.createElement('button');
+    insertButton.className = 'secondary';
+    insertButton.textContent = 'Insert';
+    insertButton.onclick = () => insertDictionaryText(item.da);
+
+    const copyButton = document.createElement('button');
+    copyButton.className = 'secondary';
+    copyButton.textContent = 'Copy';
+    copyButton.onclick = () => {
+      navigator.clipboard.writeText(item.da);
+      alert('Copied!');
+    };
+
+    actions.appendChild(insertButton);
+    actions.appendChild(copyButton);
+
+    card.appendChild(title);
+    card.appendChild(translation);
+    card.appendChild(example);
+    card.appendChild(note);
+    card.appendChild(actions);
+
+    list.appendChild(card);
+  });
+}
+
+function insertDictionaryText(text) {
+  const textarea = document.getElementById('answer');
+  const start = textarea.selectionStart || 0;
+  const end = textarea.selectionEnd || 0;
+  const current = textarea.value;
+  const insert = start > 0 && current[start - 1] !== ' ' ? ' ' + text : text;
+
+  textarea.value = current.substring(0, start) + insert + current.substring(end);
+  textarea.focus();
+  textarea.selectionStart = textarea.selectionEnd = start + insert.length;
+  saveDraft();
+}
+
+window.addEventListener('load', renderDictionary);
 window.addEventListener('load', renderWritingHistory);
 
   </script>
