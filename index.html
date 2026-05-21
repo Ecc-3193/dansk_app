@@ -117,6 +117,10 @@
       line-height: 1.5;
     }
 
+    .assignment-box {
+      min-height: 82px;
+    }
+
     .checkbox-row {
       display: flex;
       gap: 10px;
@@ -164,6 +168,15 @@
 
     button.secondary:hover {
       background: #d7e5f5;
+    }
+
+    button.danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    button.danger:hover {
+      background: #fecaca;
     }
 
     .status {
@@ -227,6 +240,50 @@
       width: auto;
       padding: 9px 12px;
       font-size: 14px;
+    }
+
+
+    .topic-row {
+      margin-bottom: 14px;
+    }
+
+    .danish-letters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 8px 0 10px;
+    }
+
+    .danish-letters button {
+      width: auto;
+      min-width: 42px;
+      padding: 8px 12px;
+      font-size: 18px;
+      border-radius: 12px;
+      background: #e6eef8;
+      color: #1f3b57;
+      border: 1px solid var(--border);
+    }
+
+    .danish-letters button:hover {
+      background: #d7e5f5;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      background: #eef3f8;
+      color: #24435c;
+      border: 1px solid #ccd6e0;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 700;
     }
 
     @media (max-width: 760px) {
@@ -294,13 +351,40 @@
     <section class="panel">
       <h2>Writing</h2>
 
+      <div class="field topic-row">
+        <label for="topicSelect">Choose a topic</label>
+        <select id="topicSelect" onchange="insertTopic()">
+          <option value="">-- Select topic --</option>
+          <option value="Skriv 6-8 sætninger om jobsøgning i Danmark. Forklar, hvad der er vigtigt, når man søger job, og brug mindst to forbindere, fx fordi, derfor eller derudover.">DU3: Jobsøgning i Danmark</option>
+          <option value="Skriv 6-8 sætninger om dit liv i Danmark. Fortæl, hvor du bor, hvad du laver i hverdagen, og hvad der er svært eller dejligt ved at bo her.">DU3: Mit liv i Danmark</option>
+          <option value="Skriv 6-8 sætninger om bolig og naboer. Beskriv dit område, dine naboer og hvad der gør et godt boligområde.">DU3: Bolig og naboer</option>
+          <option value="Skriv 6-8 sætninger om sundhed og motion. Forklar, hvad du gør for at holde dig sund, og hvad der kan være svært i hverdagen.">DU3: Sundhed og motion</option>
+          <option value="Skriv 8-10 sætninger om arbejdsliv og kolleger. Forklar, hvad der er vigtigt på en god arbejdsplads, og giv konkrete eksempler.">DU3/PD3: Arbejdsliv og kolleger</option>
+          <option value="Skriv 8-10 sætninger om sociale medier. Beskriv både fordele og ulemper, og afslut med din egen mening.">PD3: Sociale medier</option>
+          <option value="Skriv 8-10 sætninger om miljø og klima. Hvem har mest ansvar: borgere, virksomheder eller staten? Giv mindst to argumenter.">PD3: Miljø og klima</option>
+          <option value="Skriv 8-10 sætninger om dansk kultur. Hvad har du lagt mærke til i Danmark, og hvordan adskiller det sig fra Polen eller et andet land, du kender?">PD3: Dansk kultur</option>
+          <option value="Skriv 8-10 sætninger om uddannelse og fremtid. Hvad betyder uddannelse for mennesker, og er erfaring lige så vigtig som uddannelse?">PD3: Uddannelse og fremtid</option>
+          <option value="Skriv 8-10 sætninger om familie og traditioner. Forklar, hvorfor traditioner er vigtige, og hvordan de kan ændre sig, når man bor i et nyt land.">PD3: Familie og traditioner</option>
+          <option value="Skriv en kort e-mail til en ven eller kollega. Forklar en situation, stil et spørgsmål, og afslut venligt.">Writing: kort e-mail</option>
+          <option value="Skriv en kort argumenterende tekst. Brug: på den ene side, på den anden side, derfor og efter min mening.">Writing: argumentation</option>
+        </select>
+      </div>
+
       <div class="field">
         <label for="task">Topic / Assignment (optional)</label>
-        <input type="text" id="task" oninput="saveDraft()" placeholder="e.g. Jobsøgning i Danmark" />
+        <textarea id="task" class="assignment-box" oninput="saveDraft()" placeholder="Choose a topic or write your own assignment..."></textarea>
       </div>
 
       <div class="field" style="margin-top:14px;">
         <label for="answer">Your Danish Text</label>
+        <div class="danish-letters" aria-label="Danish letters">
+          <button type="button" onclick="insertLetter('æ')">æ</button>
+          <button type="button" onclick="insertLetter('ø')">ø</button>
+          <button type="button" onclick="insertLetter('å')">å</button>
+          <button type="button" onclick="insertLetter('Æ')">Æ</button>
+          <button type="button" onclick="insertLetter('Ø')">Ø</button>
+          <button type="button" onclick="insertLetter('Å')">Å</button>
+        </div>
         <textarea id="answer" oninput="saveDraft()" placeholder="Write your Danish text here..."></textarea>
       </div>
 
@@ -316,12 +400,17 @@
 
       <div id="preview" class="status"></div>
       <div id="status" class="status"></div>
+      <div id="tags" class="tags"></div>
       <div class="output" id="output"></div>
     </section>
 
     <section class="panel">
       <h2>Writing History</h2>
-      <p class="status">Your last 10 writing tasks are saved here in this browser.</p>
+      <p class="status">Your last 10 writing tasks are saved here in this browser. You can reuse, generate again, copy, or delete old texts.</p>
+      <div class="history-actions" style="margin-bottom:10px;">
+        <button class="secondary" onclick="clearCurrentDraft()">Clear current text</button>
+        <button class="danger" onclick="clearWritingHistory()">Clear history</button>
+      </div>
       <div id="history"></div>
     </section>
   </div>
@@ -406,6 +495,7 @@ Additional instructions for section 9 (Model Answer):
       document.getElementById('preview').textContent = `Mode: ${mode} | Style: ${style} | Focus: ${focus}${importantOnly ? ' | Important mistakes only' : ''}`;
       document.getElementById('status').textContent = "✅ Prompt ready";
       document.getElementById('output').textContent = prompt;
+      showTags(mode, style, focus, importantOnly);
       saveWritingHistory();
     }
 
@@ -524,7 +614,9 @@ function renderWritingHistory() {
       <div class="history-preview">${preview}</div>
       <div class="history-actions">
         <button class="secondary" onclick="reuseWriting(${index})">Reuse</button>
+        <button class="secondary" onclick="generateAgain(${index})">Generate again</button>
         <button class="secondary" onclick="copyWriting(${index})">Copy text</button>
+        <button class="danger" onclick="deleteWriting(${index})">Delete</button>
       </div>
     `;
 
@@ -537,10 +629,56 @@ function reuseWriting(index) {
   const item = history[index];
   if (!item) return;
 
+  applyHistoryItem(item);
+  document.getElementById('answer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+
+function applyHistoryItem(item) {
   document.getElementById('task').value = item.task === 'No topic' ? '' : item.task;
-  document.getElementById('answer').value = item.answer;
+  document.getElementById('answer').value = item.answer || '';
+
+  if (item.mode) document.getElementById('mode').value = item.mode;
+  if (item.style) document.getElementById('style').value = item.style;
+  if (item.focus) document.getElementById('focus').value = item.focus;
+
   saveDraft();
-  alert('Writing loaded back into the form.');
+}
+
+function generateAgain(index) {
+  const history = JSON.parse(localStorage.getItem('writing_history') || '[]');
+  const item = history[index];
+  if (!item) return;
+
+  applyHistoryItem(item);
+  generatePrompt();
+  document.getElementById('output').style.display = 'block';
+  document.getElementById('preview').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function deleteWriting(index) {
+  let history = JSON.parse(localStorage.getItem('writing_history') || '[]');
+  history.splice(index, 1);
+  localStorage.setItem('writing_history', JSON.stringify(history));
+  renderWritingHistory();
+}
+
+function clearWritingHistory() {
+  if (!confirm('Clear all writing history?')) return;
+  localStorage.removeItem('writing_history');
+  renderWritingHistory();
+}
+
+function clearCurrentDraft() {
+  if (!confirm('Clear current topic and text?')) return;
+  document.getElementById('task').value = '';
+  document.getElementById('answer').value = '';
+  document.getElementById('topicSelect').value = '';
+  document.getElementById('preview').textContent = '';
+  document.getElementById('status').textContent = '';
+  document.getElementById('tags').innerHTML = '';
+  document.getElementById('output').textContent = '';
+  saveDraft();
 }
 
 function copyWriting(index) {
@@ -550,6 +688,44 @@ function copyWriting(index) {
 
   navigator.clipboard.writeText(item.answer);
   alert('Writing copied!');
+}
+
+
+function insertTopic() {
+  const selectedTopic = document.getElementById('topicSelect').value;
+  if (selectedTopic) {
+    document.getElementById('task').value = selectedTopic;
+    saveDraft();
+  }
+}
+
+function insertLetter(letter) {
+  const textarea = document.getElementById('answer');
+  const start = textarea.selectionStart || 0;
+  const end = textarea.selectionEnd || 0;
+  const text = textarea.value;
+
+  textarea.value = text.substring(0, start) + letter + text.substring(end);
+  textarea.focus();
+  textarea.selectionStart = textarea.selectionEnd = start + letter.length;
+  saveDraft();
+}
+
+function showTags(mode, style, focus, importantOnly) {
+  const container = document.getElementById('tags');
+  if (!container) return;
+
+  const tags = [mode, style, focus];
+  if (importantOnly) tags.push('Important mistakes only');
+
+  container.innerHTML = '';
+
+  tags.forEach((tagText) => {
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.textContent = tagText;
+    container.appendChild(span);
+  });
 }
 
 window.addEventListener('load', renderWritingHistory);
