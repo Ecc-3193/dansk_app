@@ -295,6 +295,22 @@
       <h2>Writing</h2>
 
       <div class="field">
+    <label>Choose a topic:</label>
+
+<select id="topicSelect" onchange="insertTopic()">
+  <option value="">-- Select topic --</option>
+
+  <option>Jobsøgning i Danmark</option>
+  <option>Mit liv i Danmark</option>
+  <option>Arbejdsliv og kolleger</option>
+  <option>Bolig og naboer</option>
+  <option>Sundhed og motion</option>
+  <option>Sociale medier</option>
+  <option>Miljø og klima</option>
+  <option>Dansk kultur</option>
+  <option>Uddannelse og fremtid</option>
+  <option>Familie og traditioner</option>
+</select>
         <label for="task">Topic / Assignment (optional)</label>
         <input type="text" id="task" oninput="saveDraft()" placeholder="e.g. Jobsøgning i Danmark" />
       </div>
