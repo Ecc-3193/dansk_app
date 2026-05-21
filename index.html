@@ -1,120 +1,929 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Danish Writing Helper v9</title>
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #111827;
-  color: #f3f4f6;
-  margin: 0;
-  padding: 24px;
-}
-.container {
-  max-width: 1000px;
-  margin: auto;
-}
-.panel {
-  background: #1f2937;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 18px;
-}
-textarea, select {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid #374151;
-  background: #111827;
-  color: white;
-  margin-top: 8px;
-}
-textarea {
-  min-height: 160px;
-}
-button {
-  margin-top: 10px;
-  padding: 12px 16px;
-  border-radius: 12px;
-  border: none;
-  background: #2563eb;
-  color: white;
-  cursor: pointer;
-}
-.feedback-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 14px;
-}
-.feedback-card {
-  background: #374151;
-  padding: 10px 14px;
-  border-radius: 999px;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Danish Writing Helper</title>
+  <style>
+    :root {
+      --bg: #eef3f6;
+      --card: #ffffff;
+      --text: #1f2933;
+      --muted: #667085;
+      --border: #d9e2ec;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --soft: #f7fafc;
+      --success: #0f766e;
+      --button-secondary-bg: #e6eef8;
+      --button-secondary-text: #1f3b57;
+      --button-secondary-hover: #d7e5f5;
+      --output-bg: #eef3f8;
+      --danger-bg: #fee2e2;
+      --danger-text: #991b1b;
+      --danger-hover: #fecaca;
+    }
+
+    body.dark {
+      --bg: #0f172a;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #374151;
+      --primary: #60a5fa;
+      --primary-dark: #3b82f6;
+      --soft: #1f2937;
+      --success: #5eead4;
+      --button-secondary-bg: #1f2937;
+      --button-secondary-text: #dbeafe;
+      --button-secondary-hover: #263244;
+      --output-bg: #0b1220;
+      --danger-bg: #3f1d1d;
+      --danger-text: #fecaca;
+      --danger-hover: #5b2424;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, var(--bg) 0%, var(--soft) 100%);
+      color: var(--text);
+      margin: 0;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 26px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 32px;
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
+      margin-bottom: 18px;
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+    }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      align-items: end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    label {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    select,
+    input[type="text"],
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--card);
+      color: var(--text);
+      padding: 12px 13px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    select:focus,
+    input[type="text"]:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    input[type="text"] {
+      min-height: 44px;
+    }
+
+    textarea {
+      min-height: 220px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .assignment-box {
+      min-height: 82px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 13px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--soft);
+      min-height: 44px;
+    }
+
+    .checkbox-row label {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      background: var(--primary);
+      color: white;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    button.secondary {
+      background: var(--button-secondary-bg);
+      color: var(--button-secondary-text);
+    }
+
+    button.secondary:hover {
+      background: var(--button-secondary-hover);
+    }
+
+    button.danger {
+      background: var(--danger-bg);
+      color: var(--danger-text);
+    }
+
+    button.danger:hover {
+      background: var(--danger-hover);
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    #status {
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    .output {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      background: var(--output-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      white-space: pre-wrap;
+      max-height: 420px;
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .history-card {
+      border: 1px solid var(--border);
+      padding: 14px;
+      margin-top: 12px;
+      border-radius: 16px;
+      background: var(--soft);
+    }
+
+    .history-card strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .history-card small {
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .history-preview {
+      white-space: pre-wrap;
+      margin-top: 10px;
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .history-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .history-actions button {
+      width: auto;
+      padding: 9px 12px;
+      font-size: 14px;
+    }
+
+
+    .topic-row {
+      margin-bottom: 14px;
+    }
+
+    .danish-letters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 8px 0 10px;
+    }
+
+    .danish-letters button {
+      width: auto;
+      min-width: 42px;
+      padding: 8px 12px;
+      font-size: 18px;
+      border-radius: 12px;
+      background: var(--button-secondary-bg);
+      color: var(--button-secondary-text);
+      border: 1px solid var(--border);
+    }
+
+    .danish-letters button:hover {
+      background: var(--button-secondary-hover);
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      background: var(--output-bg);
+      color: var(--button-secondary-text);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .theme-toggle {
+      width: auto;
+      white-space: nowrap;
+      background: var(--button-secondary-bg);
+      color: var(--button-secondary-text);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+    }
+
+    .theme-toggle:hover {
+      background: var(--button-secondary-hover);
+    }
+
+
+    .feedback-panel {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--soft);
+      display: none;
+    }
+
+    .feedback-panel h3 {
+      margin: 0 0 6px;
+      font-size: 17px;
+    }
+
+    .feedback-panel p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .feedback-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .feedback-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--card);
+      padding: 12px;
+    }
+
+    .feedback-card strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+
+    .feedback-card span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 14px;
+      }
+
+      .control-grid,
+      .actions,
+      .feedback-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+
+      .hero-top {
+        flex-direction: column;
+      }
+
+      .theme-toggle {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <div class="panel">
-    <h1>Danish Writing Helper v9</h1>
+  <div class="container">
+    <header class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>Danish Writing Helper</h1>
+          <p class="subtitle">A small writing workspace for DU3 → PD3 practice: write, generate a teacher prompt, save your work, and reuse earlier texts.</p>
+        </div>
+        <button id="themeToggle" class="theme-toggle" type="button" onclick="toggleTheme()">🌙 Dark mode</button>
+      </div>
+    </header>
 
-    <label>Learning focus</label>
-    <select id="focus">
-      <option>Grammar accuracy</option>
-      <option>Natural spoken Danish</option>
-      <option>Written structure</option>
-      <option>PD3 exam preparation</option>
-      <option>Vocabulary and expressions</option>
-    </select>
+    <section class="panel">
+      <h2>Settings</h2>
+      <div class="control-grid">
+        <div class="field">
+          <label for="mode">Correction mode</label>
+          <select id="mode">
+            <option>Gentle teacher</option>
+            <option>Normal teacher</option>
+            <option>Strict correction</option>
+            <option>PD3 exam mode</option>
+          </select>
+        </div>
 
-    <label>Your Danish Text</label>
-    <textarea id="answer"></textarea>
+        <div class="field">
+          <label for="style">Style</label>
+          <select id="style">
+            <option>Written Danish</option>
+            <option>Spoken Danish</option>
+          </select>
+        </div>
 
-    <button onclick="generateFeedback()">Generate feedback focus</button>
+        <div class="field">
+          <label for="focus">Learning focus</label>
+          <select id="focus">
+            <option>Grammar accuracy</option>
+            <option>Natural spoken Danish</option>
+            <option>Written structure</option>
+            <option>PD3 exam preparation</option>
+            <option>Vocabulary and expressions</option>
+          </select>
+        </div>
+      </div>
 
-    <div id="feedback" class="feedback-grid"></div>
+      <div class="checkbox-row" style="margin-top:14px;">
+        <input type="checkbox" id="importantOnly" />
+        <label for="importantOnly">Only the most important mistakes</label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Writing</h2>
+
+      <div class="field topic-row">
+        <label for="topicSelect">Choose a topic</label>
+        <select id="topicSelect" onchange="insertTopic()">
+          <option value="">-- Select topic --</option>
+          <option value="Skriv 6-8 sætninger om jobsøgning i Danmark. Forklar, hvad der er vigtigt, når man søger job, og brug mindst to forbindere, fx fordi, derfor eller derudover.">DU3: Jobsøgning i Danmark</option>
+          <option value="Skriv 6-8 sætninger om dit liv i Danmark. Fortæl, hvor du bor, hvad du laver i hverdagen, og hvad der er svært eller dejligt ved at bo her.">DU3: Mit liv i Danmark</option>
+          <option value="Skriv 6-8 sætninger om bolig og naboer. Beskriv dit område, dine naboer og hvad der gør et godt boligområde.">DU3: Bolig og naboer</option>
+          <option value="Skriv 6-8 sætninger om sundhed og motion. Forklar, hvad du gør for at holde dig sund, og hvad der kan være svært i hverdagen.">DU3: Sundhed og motion</option>
+          <option value="Skriv 8-10 sætninger om arbejdsliv og kolleger. Forklar, hvad der er vigtigt på en god arbejdsplads, og giv konkrete eksempler.">DU3/PD3: Arbejdsliv og kolleger</option>
+          <option value="Skriv 8-10 sætninger om sociale medier. Beskriv både fordele og ulemper, og afslut med din egen mening.">PD3: Sociale medier</option>
+          <option value="Skriv 8-10 sætninger om miljø og klima. Hvem har mest ansvar: borgere, virksomheder eller staten? Giv mindst to argumenter.">PD3: Miljø og klima</option>
+          <option value="Skriv 8-10 sætninger om dansk kultur. Hvad har du lagt mærke til i Danmark, og hvordan adskiller det sig fra Polen eller et andet land, du kender?">PD3: Dansk kultur</option>
+          <option value="Skriv 8-10 sætninger om uddannelse og fremtid. Hvad betyder uddannelse for mennesker, og er erfaring lige så vigtig som uddannelse?">PD3: Uddannelse og fremtid</option>
+          <option value="Skriv 8-10 sætninger om familie og traditioner. Forklar, hvorfor traditioner er vigtige, og hvordan de kan ændre sig, når man bor i et nyt land.">PD3: Familie og traditioner</option>
+          <option value="Skriv en kort e-mail til en ven eller kollega. Forklar en situation, stil et spørgsmål, og afslut venligt.">Writing: kort e-mail</option>
+          <option value="Skriv en kort argumenterende tekst. Brug: på den ene side, på den anden side, derfor og efter min mening.">Writing: argumentation</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="task">Topic / Assignment (optional)</label>
+        <textarea id="task" class="assignment-box" oninput="saveDraft()" placeholder="Choose a topic or write your own assignment..."></textarea>
+      </div>
+
+      <div class="field" style="margin-top:14px;">
+        <label for="answer">Your Danish Text</label>
+        <div class="danish-letters" aria-label="Danish letters">
+          <button type="button" onclick="insertLetter('æ')">æ</button>
+          <button type="button" onclick="insertLetter('ø')">ø</button>
+          <button type="button" onclick="insertLetter('å')">å</button>
+          <button type="button" onclick="insertLetter('Æ')">Æ</button>
+          <button type="button" onclick="insertLetter('Ø')">Ø</button>
+          <button type="button" onclick="insertLetter('Å')">Å</button>
+        </div>
+        <textarea id="answer" oninput="saveDraft()" placeholder="Write your Danish text here..."></textarea>
+      </div>
+
+      <div class="actions">
+        <button onclick="generatePrompt()">Generate prompt</button>
+        <button class="secondary" onclick="copyPrompt()">Copy Prompt</button>
+        <button class="secondary" onclick="togglePrompt()">Show / Hide</button>
+        <button class="secondary" onclick="exportData()">Export Data</button>
+        <button class="secondary" onclick="document.getElementById('importFile').click()">Import Data</button>
+      </div>
+
+      <input type="file" id="importFile" style="display:none" onchange="importData(event)" />
+
+      <div id="preview" class="status"></div>
+      <div id="status" class="status"></div>
+      <div id="tags" class="tags"></div>
+      <div id="feedbackPanel" class="feedback-panel">
+        <h3>Teacher Feedback Focus</h3>
+        <p>This shows what the teacher prompt will focus on when you paste it into ChatGPT.</p>
+        <div id="feedbackCards" class="feedback-grid"></div>
+      </div>
+      <div class="output" id="output"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Writing History</h2>
+      <p class="status">Your last 10 writing tasks are saved here in this browser. You can reuse, generate again, copy, or delete old texts.</p>
+      <div class="history-actions" style="margin-bottom:10px;">
+        <button class="secondary" onclick="clearCurrentDraft()">Clear current text</button>
+        <button class="danger" onclick="clearWritingHistory()">Clear history</button>
+      </div>
+      <div id="history"></div>
+    </section>
   </div>
-</div>
 
-<script>
-function generateFeedback() {
+  <script>
+    let prompt = "";
+
+
+    function generatePrompt() {
+      const task = document.getElementById('task').value;
+      const answer = document.getElementById('answer').value;
+      const mode = document.getElementById('mode').value;
+      const importantOnly = document.getElementById('importantOnly').checked;
+      const style = document.getElementById('style').value;
+      const focus = document.getElementById('focus').value;
+
+
+      let modeInstruction = "";
+
+      if (mode === "Gentle teacher") {
+        modeInstruction = "Be very supportive, highlight positives, correct softly.";
+      } else if (mode === "Normal teacher") {
+        modeInstruction = "Balance corrections and encouragement.";
+      } else if (mode === "Strict correction") {
+        modeInstruction = "Focus strongly on errors and precise corrections.";
+      } else if (mode === "PD3 exam mode") {
+        modeInstruction = "Focus on exam readiness, clarity, and PD3 expectations.";
+      }
+
+      prompt = `Act as a Danish teacher for an adult learner at DU3 Module 3 level, working toward PD3.
+Mode: ${mode}.
+${modeInstruction}
+
+
+Here is the writing assignment:
+${task}
+
+Here is the student's answer:
+${answer}
+
+Follow these rules:
+- Keep the learner's original style whenever possible
+- Do NOT rewrite everything into overly advanced Danish
+- Explain WHY something is wrong (simple explanation in Polish)
+
+${style === 'Spoken Danish' ? '- Focus on natural spoken Danish, simple flow, and pronunciation-friendly phrases' : '- Focus on correct written Danish: grammar, word order, connectors, and clear structure'}
+${importantOnly ? '- Focus ONLY on the most important, recurring, or blocking mistakes (ignore small details)' : '- Include both major and minor mistakes where helpful'}
+
+${focus === 'Grammar accuracy' ? '- Prioritise grammatical correctness and clear rules' : ''}
+${focus === 'Natural spoken Danish' ? '- Prioritise natural, everyday spoken Danish expressions' : ''}
+${focus === 'Written structure' ? '- Prioritise clear structure, connectors, and paragraph organisation' : ''}
+${focus === 'PD3 exam preparation' ? '- Prioritise PD3 exam criteria: clarity, argumentation, and correctness' : ''}
+${focus === 'Vocabulary and expressions' ? '- Prioritise improving vocabulary and useful expressions' : ''}
+
+STRUCTURED FEEDBACK (use clear headings and sections):
+
+IMPORTANT: Format the entire response in **Markdown**.
+
+### 1. Necessary corrections
+### 2. Better natural Danish
+### 3. PD3 upgrade
+### 4. Grammar explanation in simple Polish
+### 5. Useful expressions and phrases
+### 6. Personalised follow-up exercises
+### 7. Recurring error tracking
+### 8. PD3 scoring hint
+### 9. Model Answer (short)
+
+
+Follow this structure strictly.
+
+Additional instructions for section 9 (Model Answer):
+- Write a short model answer (maximum 3–5 sentences)
+- Use realistic PD3-level Danish
+- Keep it natural and clear (not overly academic)
+- Make it feel achievable for a learner moving from DU3 toward PD3
+- Use useful connectors and natural sentence flow
+- Focus on good structure rather than difficult vocabulary
+- Present this section clearly in Markdown like the other sections (with heading and clean paragraph)
+`;
+
+      document.getElementById('preview').textContent = `Mode: ${mode} | Style: ${style} | Focus: ${focus}${importantOnly ? ' | Important mistakes only' : ''}`;
+      document.getElementById('status').textContent = "✅ Prompt ready";
+      document.getElementById('output').textContent = prompt;
+      showTags(mode, style, focus, importantOnly);
+      showFeedbackCards(mode, style, focus, importantOnly);
+      saveWritingHistory();
+    }
+
+
+    function copyPrompt() {
+  const output = document.getElementById('output').textContent;
+  navigator.clipboard.writeText(output);
+  alert('Prompt copied!');
+    }
+
+
+    function togglePrompt() {
+      const output = document.getElementById('output');
+      output.style.display = output.style.display === 'none' ? 'block' : 'none';
+    }
+  function saveDraft() {
+  localStorage.setItem('dansk_task', document.getElementById('task').value);
+  localStorage.setItem('dansk_answer', document.getElementById('answer').value);
+}
+
+window.addEventListener('load', function() {
+  document.getElementById('task').value = localStorage.getItem('dansk_task') || '';
+  document.getElementById('answer').value = localStorage.getItem('dansk_answer') || '';
+});
+    function exportData() {
+  const data = {
+    task: document.getElementById('task').value,
+    answer: document.getElementById('answer').value,
+    history: JSON.parse(localStorage.getItem('writing_history') || '[]')
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(data, null, 2)],
+    { type: 'application/json' }
+  );
+
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'dansk-helper-backup.json';
+  link.click();
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    const data = JSON.parse(e.target.result);
+
+    document.getElementById('task').value = data.task || '';
+    document.getElementById('answer').value = data.answer || '';
+
+    if (Array.isArray(data.history)) {
+      localStorage.setItem('writing_history', JSON.stringify(data.history));
+    }
+
+    saveDraft();
+    renderWritingHistory();
+    alert('Data imported!');
+  };
+
+  reader.readAsText(file);
+}
+
+
+function saveWritingHistory() {
+  const task = document.getElementById('task').value.trim();
+  const answer = document.getElementById('answer').value.trim();
+  const mode = document.getElementById('mode').value;
+  const style = document.getElementById('style').value;
   const focus = document.getElementById('focus').value;
-  const feedback = document.getElementById('feedback');
 
-  let cards = ['Grammar', 'Word order'];
+  if (!answer) return;
 
-  if (focus === 'PD3 exam preparation') {
-    cards.push('PD3 structure');
-    cards.push('Argumentation');
+  let history = JSON.parse(localStorage.getItem('writing_history') || '[]');
+
+  const entry = {
+    date: new Date().toLocaleString(),
+    task: task || 'No topic',
+    answer,
+    mode,
+    style,
+    focus
+  };
+
+  history.unshift(entry);
+  history = history.slice(0, 10);
+
+  localStorage.setItem('writing_history', JSON.stringify(history));
+  renderWritingHistory();
+}
+
+function renderWritingHistory() {
+  const container = document.getElementById('history');
+  if (!container) return;
+
+  const history = JSON.parse(localStorage.getItem('writing_history') || '[]');
+  container.innerHTML = '';
+
+  if (history.length === 0) {
+    container.innerHTML = '<p class="status">No writing history yet.</p>';
+    return;
   }
 
-  if (focus === 'Vocabulary and expressions') {
-    cards.push('Vocabulary');
-    cards.push('Useful expressions');
+  history.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.className = 'history-card';
+
+    const preview = item.answer.length > 250 ? item.answer.substring(0, 250) + '...' : item.answer;
+
+    card.innerHTML = `
+      <strong>Writing ${index + 1}: ${item.task}</strong><br>
+      <small>${item.date} | ${item.mode} | ${item.style} | ${item.focus}</small>
+      <div class="history-preview">${preview}</div>
+      <div class="history-actions">
+        <button class="secondary" onclick="reuseWriting(${index})">Reuse</button>
+        <button class="secondary" onclick="generateAgain(${index})">Generate again</button>
+        <button class="secondary" onclick="copyWriting(${index})">Copy text</button>
+        <button class="danger" onclick="deleteWriting(${index})">Delete</button>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+function reuseWriting(index) {
+  const history = JSON.parse(localStorage.getItem('writing_history') || '[]');
+  const item = history[index];
+  if (!item) return;
+
+  applyHistoryItem(item);
+  document.getElementById('answer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+
+function applyHistoryItem(item) {
+  document.getElementById('task').value = item.task === 'No topic' ? '' : item.task;
+  document.getElementById('answer').value = item.answer || '';
+
+  if (item.mode) document.getElementById('mode').value = item.mode;
+  if (item.style) document.getElementById('style').value = item.style;
+  if (item.focus) document.getElementById('focus').value = item.focus;
+
+  saveDraft();
+}
+
+function generateAgain(index) {
+  const history = JSON.parse(localStorage.getItem('writing_history') || '[]');
+  const item = history[index];
+  if (!item) return;
+
+  applyHistoryItem(item);
+  generatePrompt();
+  document.getElementById('output').style.display = 'block';
+  document.getElementById('preview').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function deleteWriting(index) {
+  let history = JSON.parse(localStorage.getItem('writing_history') || '[]');
+  history.splice(index, 1);
+  localStorage.setItem('writing_history', JSON.stringify(history));
+  renderWritingHistory();
+}
+
+function clearWritingHistory() {
+  if (!confirm('Clear all writing history?')) return;
+  localStorage.removeItem('writing_history');
+  renderWritingHistory();
+}
+
+function clearCurrentDraft() {
+  if (!confirm('Clear current topic and text?')) return;
+  document.getElementById('task').value = '';
+  document.getElementById('answer').value = '';
+  document.getElementById('topicSelect').value = '';
+  document.getElementById('preview').textContent = '';
+  document.getElementById('status').textContent = '';
+  document.getElementById('tags').innerHTML = '';
+  document.getElementById('feedbackCards').innerHTML = '';
+  document.getElementById('feedbackPanel').style.display = 'none';
+  document.getElementById('output').textContent = '';
+  saveDraft();
+}
+
+function copyWriting(index) {
+  const history = JSON.parse(localStorage.getItem('writing_history') || '[]');
+  const item = history[index];
+  if (!item) return;
+
+  navigator.clipboard.writeText(item.answer);
+  alert('Writing copied!');
+}
+
+
+function insertTopic() {
+  const selectedTopic = document.getElementById('topicSelect').value;
+  if (selectedTopic) {
+    document.getElementById('task').value = selectedTopic;
+    saveDraft();
+  }
+}
+
+function insertLetter(letter) {
+  const textarea = document.getElementById('answer');
+  const start = textarea.selectionStart || 0;
+  const end = textarea.selectionEnd || 0;
+  const text = textarea.value;
+
+  textarea.value = text.substring(0, start) + letter + text.substring(end);
+  textarea.focus();
+  textarea.selectionStart = textarea.selectionEnd = start + letter.length;
+  saveDraft();
+}
+
+
+function showFeedbackCards(mode, style, focus, importantOnly) {
+  const panel = document.getElementById('feedbackPanel');
+  const container = document.getElementById('feedbackCards');
+  if (!panel || !container) return;
+
+  const cards = [
+    { title: 'Grammar', text: 'Clear corrections with simple Polish explanations.' },
+    { title: 'Word order', text: 'V2, fordi/derfor, subordinate clauses and sentence flow.' }
+  ];
+
+  if (style === 'Written Danish') {
+    cards.push({ title: 'Written clarity', text: 'Structure, punctuation and natural written Danish.' });
+  } else {
+    cards.push({ title: 'Spoken flow', text: 'Natural phrases and pronunciation-friendly wording.' });
+  }
+
+  if (focus === 'Grammar accuracy') {
+    cards.push({ title: 'Accuracy focus', text: 'Rules, patterns and recurring grammar problems.' });
   }
 
   if (focus === 'Natural spoken Danish') {
-    cards.push('Natural flow');
-    cards.push('Conversation phrases');
+    cards.push({ title: 'Natural Danish', text: 'Everyday wording that sounds less translated.' });
   }
 
   if (focus === 'Written structure') {
-    cards.push('Connectors');
-    cards.push('Paragraph structure');
+    cards.push({ title: 'Structure', text: 'Connectors, paragraph logic and clearer progression.' });
   }
 
-  feedback.innerHTML = '';
+  if (focus === 'PD3 exam preparation' || mode === 'PD3 exam mode') {
+    cards.push({ title: 'PD3 structure', text: 'Argumentation, clarity and realistic model answer.' });
+  }
 
-  cards.forEach(card => {
+  if (focus === 'Vocabulary and expressions') {
+    cards.push({ title: 'Vocabulary', text: 'Useful expressions and better word choices.' });
+  }
+
+  if (importantOnly) {
+    cards.push({ title: 'Priority only', text: 'Small details are ignored; focus stays on blocking mistakes.' });
+  }
+
+  container.innerHTML = '';
+  cards.slice(0, 6).forEach((card) => {
     const div = document.createElement('div');
     div.className = 'feedback-card';
-    div.textContent = '✓ ' + card;
-    feedback.appendChild(div);
+    div.innerHTML = `<strong>✓ ${card.title}</strong><span>${card.text}</span>`;
+    container.appendChild(div);
+  });
+
+  panel.style.display = 'block';
+}
+
+function showTags(mode, style, focus, importantOnly) {
+  const container = document.getElementById('tags');
+  if (!container) return;
+
+  const tags = [mode, style, focus];
+  if (importantOnly) tags.push('Important mistakes only');
+
+  container.innerHTML = '';
+
+  tags.forEach((tagText) => {
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.textContent = tagText;
+    container.appendChild(span);
   });
 }
-</script>
+
+
+function applyTheme(theme) {
+  const isDark = theme === 'dark';
+  document.body.classList.toggle('dark', isDark);
+
+  const button = document.getElementById('themeToggle');
+  if (button) {
+    button.textContent = isDark ? '☀️ Light mode' : '🌙 Dark mode';
+  }
+
+  localStorage.setItem('dansk_theme', theme);
+}
+
+function toggleTheme() {
+  const currentTheme = localStorage.getItem('dansk_theme') || 'light';
+  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+}
+
+function loadTheme() {
+  const savedTheme = localStorage.getItem('dansk_theme') || 'light';
+  applyTheme(savedTheme);
+}
+
+window.addEventListener('load', loadTheme);
+
+window.addEventListener('load', renderWritingHistory);
+
+  </script>
+
 </body>
 </html>
