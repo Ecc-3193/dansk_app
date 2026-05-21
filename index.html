@@ -4,21 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Danish Writing Helper</title>
- .tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.tag {
-  background: #eef3f8;
-  color: #24435c;
-  border: 1px solid #ccd6e0;
-  border-radius: 999px;
-  padding: 6px 10px;
-  font-size: 13px;
-}
   <style>
     :root {
       --bg: #eef3f6;
@@ -258,26 +243,7 @@
         font-size: 26px;
       }
     }
-    .danish-letters {
-  display: flex;
-  gap: 8px;
-  margin: 10px 0;
-}
-
-.danish-letters button {
-  width: auto;
-  padding: 8px 14px;
-  font-size: 18px;
-  border-radius: 8px;
-  background: #eef3f8;
-  color: #333;
-  border: 1px solid #ccd6e0;
-}
-
-.danish-letters button:hover {
-  background: #dce8f5;
-}
-  
+  </style>
 </head>
 <body>
   <div class="container">
@@ -329,41 +295,14 @@
       <h2>Writing</h2>
 
       <div class="field">
-    <label>Choose a topic:</label>
-
-<select id="topicSelect" onchange="insertTopic()">
-  <option value="">-- Select topic --</option>
-
-  <option value="Jobsøgning i Danmark">Jobsøgning i Danmark</option>
-<option value="Mit liv i Danmark">Mit liv i Danmark</option>
-<option value="Arbejdsliv og kolleger">Arbejdsliv og kolleger</option>
-  <option value="Bolig og naboer">Boilg og naboer</option>
-  <option value="Sundhed og motion">Sundhed og motion</option>
-  <option value="Sociale medier">Social medier</option>
-  <option value="Miljø og klima">Miljø og klima</option>
-  <option value="Dansk kultur"> Dansk kultur</option>
-  <option value="Uddannelse og fremtid">Uddannelse og fremtid</option>
-  <option value="Familie og traditioner">Familie og traditioner</option>
-</select>
         <label for="task">Topic / Assignment (optional)</label>
         <input type="text" id="task" oninput="saveDraft()" placeholder="e.g. Jobsøgning i Danmark" />
       </div>
 
       <div class="field" style="margin-top:14px;">
-  <label for="answer">Your Danish Text</label>
-
-  <div class="danish-letters">
-    <button type="button" onclick="insertLetter('æ')">æ</button>
-    <button type="button" onclick="insertLetter('ø')">ø</button>
-    <button type="button" onclick="insertLetter('å')">å</button>
-
-    <button type="button" onclick="insertLetter('Æ')">Æ</button>
-    <button type="button" onclick="insertLetter('Ø')">Ø</button>
-    <button type="button" onclick="insertLetter('Å')">Å</button>
-  </div>
-
-  <textarea id="answer" oninput="saveDraft()" placeholder="Write your Danish text here..."></textarea>
-</div>
+        <label for="answer">Your Danish Text</label>
+        <textarea id="answer" oninput="saveDraft()" placeholder="Write your Danish text here..."></textarea>
+      </div>
 
       <div class="actions">
         <button onclick="generatePrompt()">Generate prompt</button>
@@ -377,7 +316,6 @@
 
       <div id="preview" class="status"></div>
       <div id="status" class="status"></div>
-      <div id="tags" class="tags"></div>
       <div class="output" id="output"></div>
     </section>
 
@@ -468,7 +406,6 @@ Additional instructions for section 9 (Model Answer):
       document.getElementById('preview').textContent = `Mode: ${mode} | Style: ${style} | Focus: ${focus}${importantOnly ? ' | Important mistakes only' : ''}`;
       document.getElementById('status').textContent = "✅ Prompt ready";
       document.getElementById('output').textContent = prompt;
-      showTags(mode, style, focus, importantOnly);
       saveWritingHistory();
     }
 
@@ -617,36 +554,6 @@ function copyWriting(index) {
 
 window.addEventListener('load', renderWritingHistory);
 
-function insertTopic() {
-  const selectedTopic = document.getElementById('topicSelect').value;
-
-  if (selectedTopic) {
-    document.getElementById('task').value = selectedTopic;
-
-    saveDraft();
-  }
-}
-function showTags(mode, style, focus, importantOnly) {
-  const tags = [
-    mode,
-    style,
-    focus
-  ];
-
-  if (importantOnly) {
-    tags.push('Important mistakes only');
-  }
-
-  const container = document.getElementById('tags');
-  container.innerHTML = '';
-
-  tags.forEach(tag => {
-    const span = document.createElement('span');
-    span.className = 'tag';
-    span.textContent = tag;
-    container.appendChild(span);
-  });
-}
   </script>
 
 </body>
