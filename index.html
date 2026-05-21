@@ -507,6 +507,55 @@
     }
 
 
+    .teacher-feedback-import textarea {
+      min-height: 180px;
+    }
+
+    .suggested-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .suggested-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--soft);
+      padding: 14px;
+    }
+
+    .suggested-card strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .suggested-card .meta {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+
+    .suggested-card .example {
+      font-size: 14px;
+      line-height: 1.45;
+      margin-top: 8px;
+    }
+
+    .teacher-format {
+      background: var(--soft);
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 13px;
+      color: var(--muted);
+      white-space: pre-wrap;
+      margin-top: 12px;
+    }
+
+
 
     .personal-dictionary-form {
       display: grid;
@@ -731,6 +780,7 @@
             <option>Bolig</option>
             <option>Hverdag</option>
             <option>Argumentation</option>
+            <option>Connectors</option>
             <option>PD3</option>
             <option>My mistakes</option>
             <option>Useful phrases</option>
@@ -772,11 +822,38 @@
           <option value="Bolig">Bolig</option>
           <option value="Hverdag">Hverdag</option>
           <option value="Argumentation">Argumentation</option>
+          <option value="Connectors">Connectors</option>
           <option value="PD3">PD3</option>
         </select>
       </div>
 
       <div id="dictionaryList" class="dictionary-grid"></div>
+    </section>
+
+
+    <section class="panel teacher-feedback-import">
+      <h2>Import Teacher Feedback</h2>
+      <p class="status">Paste the teacher feedback from ChatGPT here. If the feedback contains structured vocabulary or expressions, the app will suggest items you can approve before adding them to your Personal Dictionary.</p>
+
+      <div class="field">
+        <label for="teacherFeedback">Teacher feedback</label>
+        <textarea id="teacherFeedback" placeholder="Paste the teacher feedback here..."></textarea>
+      </div>
+
+      <div class="history-actions" style="margin-top:10px;">
+        <button class="secondary" onclick="extractTeacherFeedback()">Find dictionary suggestions</button>
+        <button class="secondary" onclick="clearTeacherFeedback()">Clear feedback</button>
+      </div>
+
+      <div class="teacher-format">Expected format in the teacher feedback:
+VOCABULARY TO ADD:
+- fordi | ponieważ / bo | Jeg lærer dansk, fordi jeg bor i Danmark. | Connectors
+
+EXPRESSIONS TO ADD:
+- på den ene side | z jednej strony | På den ene side er sociale medier nyttige. | Argumentation</div>
+
+      <div id="teacherSuggestionStatus" class="status"></div>
+      <div id="teacherSuggestions" class="suggested-grid"></div>
     </section>
 
     <section class="panel">
@@ -854,6 +931,16 @@ IMPORTANT: Format the entire response in **Markdown**.
 ### 8. PD3 scoring hint
 ### 9. Model Answer (short)
 
+### 10. Dictionary suggestions for the app
+At the end, include two short structured sections exactly like this if there are useful items to save:
+
+VOCABULARY TO ADD:
+- Danish word | Polish meaning | Danish example sentence | category
+
+EXPRESSIONS TO ADD:
+- Danish expression | Polish meaning | Danish example sentence | category
+
+Only include useful, reusable DU3/PD3 words or expressions. Do not include too many: maximum 5 vocabulary items and maximum 5 expressions.
 
 Follow this structure strictly.
 
@@ -1278,6 +1365,16 @@ window.addEventListener('load', loadTheme);
 
 
 const dictionaryItems = [
+  { type: 'word', category: 'Connectors', da: 'fordi', pl: 'ponieważ / bo', example: 'Jeg lærer dansk, fordi jeg bor i Danmark.', note: 'Introduces a reason. In subordinate clauses: fordi + subject + adverb + verb.' },
+  { type: 'word', category: 'Connectors', da: 'derfor', pl: 'dlatego', example: 'Jeg bor i Danmark. Derfor lærer jeg dansk.', note: 'Shows result. At the beginning of a main clause: derfor + verb + subject.' },
+  { type: 'word', category: 'Connectors', da: 'selvom', pl: 'chociaż / mimo że', example: 'Jeg øver mig, selvom dansk udtale er svær.', note: 'Subordinate conjunction. Useful for nuance.' },
+  { type: 'word', category: 'Connectors', da: 'hvis', pl: 'jeśli', example: 'Hvis jeg har tid, øver jeg mig i dansk.', note: 'If the sentence starts with hvis, the main clause has inversion.' },
+  { type: 'word', category: 'Connectors', da: 'når', pl: 'kiedy / gdy', example: 'Når jeg har tid, læser jeg dansk.', note: 'Used for repeated situations or future situations.' },
+  { type: 'word', category: 'Connectors', da: 'men', pl: 'ale', example: 'Jeg vil gerne tale dansk, men det er svært.', note: 'Does not automatically trigger inversion after the conjunction.' },
+  { type: 'word', category: 'Connectors', da: 'og', pl: 'i / oraz', example: 'Jeg læser dansk, og jeg skriver små tekster.', note: 'Connects words or clauses. Usually no extra inversion after og.' },
+  { type: 'expression', category: 'Connectors', da: 'derudover', pl: 'ponadto / oprócz tego', example: 'Derudover øver jeg mig hver dag.', note: 'At the beginning: V2 word order.' },
+  { type: 'expression', category: 'Connectors', da: 'desuden', pl: 'ponadto', example: 'Desuden går jeg på sprogskole.', note: 'At the beginning: V2 word order.' },
+  { type: 'expression', category: 'Connectors', da: 'derimod', pl: 'natomiast / z kolei', example: 'Grammatikken er logisk. Derimod er udtalen svær.', note: 'Contrast connector. At the beginning: V2 word order.' },
   { type: 'word', category: 'Arbejde', da: 'en ansøgning', pl: 'aplikacja / podanie', example: 'Jeg skriver en ansøgning til en relevant stilling.', note: 'Useful for job-search texts.' },
   { type: 'word', category: 'Arbejde', da: 'en stilling', pl: 'stanowisko', example: 'Jeg søger en stilling i Danmark.', note: 'Use with: at søge en stilling.' },
   { type: 'word', category: 'Arbejde', da: 'erfaring', pl: 'doświadczenie', example: 'Jeg har erfaring med forskning og undervisning.', note: 'Often used without article.' },
@@ -1456,6 +1553,140 @@ function insertDictionaryText(text) {
 }
 
 window.addEventListener('load', renderDictionary);
+
+let teacherSuggestionsCache = [];
+
+function parseTeacherSection(text, header) {
+  const lines = String(text || '').split(/?
+/);
+  const result = [];
+  let active = false;
+
+  lines.forEach((rawLine) => {
+    const line = rawLine.trim();
+    const upper = line.toUpperCase();
+
+    if (upper.startsWith(header)) {
+      active = true;
+      return;
+    }
+
+    if (active && upper.endsWith('TO ADD:') && !upper.startsWith(header)) {
+      active = false;
+      return;
+    }
+
+    if (!active || !line.startsWith('-')) return;
+
+    const clean = line.replace(/^-\s*/, '');
+    const parts = clean.split('|').map((part) => part.trim());
+
+    if (parts.length >= 2) {
+      result.push({
+        da: parts[0] || '',
+        pl: parts[1] || '',
+        example: parts[2] || '',
+        category: parts[3] || 'From feedback'
+      });
+    }
+  });
+
+  return result.filter((item) => item.da);
+}
+
+function extractTeacherFeedback() {
+  const feedback = document.getElementById('teacherFeedback').value;
+  const vocabulary = parseTeacherSection(feedback, 'VOCABULARY TO ADD:').map((item) => ({ ...item, type: 'word', note: 'Imported from teacher feedback' }));
+  const expressions = parseTeacherSection(feedback, 'EXPRESSIONS TO ADD:').map((item) => ({ ...item, type: 'expression', note: 'Imported from teacher feedback' }));
+
+  teacherSuggestionsCache = [...vocabulary, ...expressions];
+  renderTeacherSuggestions();
+}
+
+function renderTeacherSuggestions() {
+  const container = document.getElementById('teacherSuggestions');
+  const status = document.getElementById('teacherSuggestionStatus');
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  if (teacherSuggestionsCache.length === 0) {
+    status.textContent = 'No structured dictionary suggestions found. Check that the feedback contains VOCABULARY TO ADD or EXPRESSIONS TO ADD lines.';
+    return;
+  }
+
+  status.textContent = `Found ${teacherSuggestionsCache.length} suggestion(s). Review them before adding.`;
+
+  teacherSuggestionsCache.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.className = 'suggested-card';
+
+    card.innerHTML = `
+      <strong>${item.da}</strong>
+      <div class="meta">${item.type === 'expression' ? 'Expression' : 'Word'} · ${item.category}<br>${item.pl}</div>
+      <div class="example">${item.example || 'No example provided.'}</div>
+      <div class="history-actions" style="margin-top:10px;">
+        <button class="secondary" onclick="addTeacherSuggestion(${index})">Add to dictionary</button>
+        <button class="secondary" onclick="editTeacherSuggestion(${index})">Edit in form</button>
+        <button class="danger" onclick="skipTeacherSuggestion(${index})">Skip</button>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+function addTeacherSuggestion(index) {
+  const item = teacherSuggestionsCache[index];
+  if (!item) return;
+
+  const personalDictionary = JSON.parse(localStorage.getItem('personal_dictionary') || '[]');
+  const exists = [...personalDictionary, ...dictionaryItems].some((entry) => normalizeDictionaryText(entry.da) === normalizeDictionaryText(item.da));
+
+  if (exists && !confirm('This item may already exist in the dictionary. Add anyway?')) return;
+
+  personalDictionary.unshift({
+    id: Date.now().toString() + '-' + Math.random().toString(16).slice(2),
+    custom: true,
+    type: item.type,
+    category: item.category || 'From feedback',
+    da: item.da,
+    pl: item.pl,
+    example: item.example,
+    note: item.note || 'Imported from teacher feedback'
+  });
+
+  localStorage.setItem('personal_dictionary', JSON.stringify(personalDictionary));
+  teacherSuggestionsCache.splice(index, 1);
+  renderTeacherSuggestions();
+  renderDictionary();
+}
+
+function editTeacherSuggestion(index) {
+  const item = teacherSuggestionsCache[index];
+  if (!item) return;
+
+  document.getElementById('personalType').value = item.type;
+  document.getElementById('personalCategory').value = item.category || 'Useful phrases';
+  document.getElementById('personalDa').value = item.da || '';
+  document.getElementById('personalPl').value = item.pl || '';
+  document.getElementById('personalExample').value = item.example || '';
+  document.getElementById('personalNote').value = item.note || 'Imported from teacher feedback';
+  document.getElementById('personalDa').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function skipTeacherSuggestion(index) {
+  teacherSuggestionsCache.splice(index, 1);
+  renderTeacherSuggestions();
+}
+
+function clearTeacherFeedback() {
+  document.getElementById('teacherFeedback').value = '';
+  teacherSuggestionsCache = [];
+  document.getElementById('teacherSuggestions').innerHTML = '';
+  document.getElementById('teacherSuggestionStatus').textContent = '';
+}
+
 window.addEventListener('load', renderWritingHistory);
 
   </script>
