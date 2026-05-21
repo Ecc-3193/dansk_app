@@ -316,9 +316,20 @@
       </div>
 
       <div class="field" style="margin-top:14px;">
-        <label for="answer">Your Danish Text</label>
-        <textarea id="answer" oninput="saveDraft()" placeholder="Write your Danish text here..."></textarea>
-      </div>
+  <label for="answer">Your Danish Text</label>
+
+  <div class="danish-letters">
+    <button type="button" onclick="insertLetter('æ')">æ</button>
+    <button type="button" onclick="insertLetter('ø')">ø</button>
+    <button type="button" onclick="insertLetter('å')">å</button>
+
+    <button type="button" onclick="insertLetter('Æ')">Æ</button>
+    <button type="button" onclick="insertLetter('Ø')">Ø</button>
+    <button type="button" onclick="insertLetter('Å')">Å</button>
+  </div>
+
+  <textarea id="answer" oninput="saveDraft()" placeholder="Write your Danish text here..."></textarea>
+</div>
 
       <div class="actions">
         <button onclick="generatePrompt()">Generate prompt</button>
