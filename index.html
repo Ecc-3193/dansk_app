@@ -15,6 +15,32 @@
       --primary-dark: #1d4ed8;
       --soft: #f7fafc;
       --success: #0f766e;
+      --button-secondary-bg: #e6eef8;
+      --button-secondary-text: #1f3b57;
+      --button-secondary-hover: #d7e5f5;
+      --output-bg: #eef3f8;
+      --danger-bg: #fee2e2;
+      --danger-text: #991b1b;
+      --danger-hover: #fecaca;
+    }
+
+    body.dark {
+      --bg: #0f172a;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #374151;
+      --primary: #60a5fa;
+      --primary-dark: #3b82f6;
+      --soft: #1f2937;
+      --success: #5eead4;
+      --button-secondary-bg: #1f2937;
+      --button-secondary-text: #dbeafe;
+      --button-secondary-hover: #263244;
+      --output-bg: #0b1220;
+      --danger-bg: #3f1d1d;
+      --danger-text: #fecaca;
+      --danger-hover: #5b2424;
     }
 
     * {
@@ -23,7 +49,7 @@
 
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #eef6f8 0%, #f7fafc 100%);
+      background: linear-gradient(180deg, var(--bg) 0%, var(--soft) 100%);
       color: var(--text);
       margin: 0;
       padding: 24px;
@@ -93,7 +119,7 @@
       width: 100%;
       border: 1px solid var(--border);
       border-radius: 14px;
-      background: #fff;
+      background: var(--card);
       color: var(--text);
       padding: 12px 13px;
       font-size: 15px;
@@ -162,21 +188,21 @@
     }
 
     button.secondary {
-      background: #e6eef8;
-      color: #1f3b57;
+      background: var(--button-secondary-bg);
+      color: var(--button-secondary-text);
     }
 
     button.secondary:hover {
-      background: #d7e5f5;
+      background: var(--button-secondary-hover);
     }
 
     button.danger {
-      background: #fee2e2;
-      color: #991b1b;
+      background: var(--danger-bg);
+      color: var(--danger-text);
     }
 
     button.danger:hover {
-      background: #fecaca;
+      background: var(--danger-hover);
     }
 
     .status {
@@ -194,7 +220,7 @@
       display: none;
       margin-top: 14px;
       padding: 14px;
-      background: #eef3f8;
+      background: var(--output-bg);
       border: 1px solid var(--border);
       border-radius: 14px;
       white-space: pre-wrap;
@@ -225,7 +251,7 @@
     .history-preview {
       white-space: pre-wrap;
       margin-top: 10px;
-      color: #344054;
+      color: var(--text);
       line-height: 1.45;
     }
 
@@ -260,13 +286,13 @@
       padding: 8px 12px;
       font-size: 18px;
       border-radius: 12px;
-      background: #e6eef8;
-      color: #1f3b57;
+      background: var(--button-secondary-bg);
+      color: var(--button-secondary-text);
       border: 1px solid var(--border);
     }
 
     .danish-letters button:hover {
-      background: #d7e5f5;
+      background: var(--button-secondary-hover);
     }
 
     .tags {
@@ -277,13 +303,34 @@
     }
 
     .tag {
-      background: #eef3f8;
-      color: #24435c;
-      border: 1px solid #ccd6e0;
+      background: var(--output-bg);
+      color: var(--button-secondary-text);
+      border: 1px solid var(--border);
       border-radius: 999px;
       padding: 6px 10px;
       font-size: 13px;
       font-weight: 700;
+    }
+
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .theme-toggle {
+      width: auto;
+      white-space: nowrap;
+      background: var(--button-secondary-bg);
+      color: var(--button-secondary-text);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+    }
+
+    .theme-toggle:hover {
+      background: var(--button-secondary-hover);
     }
 
     @media (max-width: 760px) {
@@ -299,14 +346,27 @@
       h1 {
         font-size: 26px;
       }
+
+      .hero-top {
+        flex-direction: column;
+      }
+
+      .theme-toggle {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header class="hero">
-      <h1>Danish Writing Helper</h1>
-      <p class="subtitle">A small writing workspace for DU3 → PD3 practice: write, generate a teacher prompt, save your work, and reuse earlier texts.</p>
+      <div class="hero-top">
+        <div>
+          <h1>Danish Writing Helper</h1>
+          <p class="subtitle">A small writing workspace for DU3 → PD3 practice: write, generate a teacher prompt, save your work, and reuse earlier texts.</p>
+        </div>
+        <button id="themeToggle" class="theme-toggle" type="button" onclick="toggleTheme()">🌙 Dark mode</button>
+      </div>
     </header>
 
     <section class="panel">
@@ -727,6 +787,31 @@ function showTags(mode, style, focus, importantOnly) {
     container.appendChild(span);
   });
 }
+
+
+function applyTheme(theme) {
+  const isDark = theme === 'dark';
+  document.body.classList.toggle('dark', isDark);
+
+  const button = document.getElementById('themeToggle');
+  if (button) {
+    button.textContent = isDark ? '☀️ Light mode' : '🌙 Dark mode';
+  }
+
+  localStorage.setItem('dansk_theme', theme);
+}
+
+function toggleTheme() {
+  const currentTheme = localStorage.getItem('dansk_theme') || 'light';
+  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+}
+
+function loadTheme() {
+  const savedTheme = localStorage.getItem('dansk_theme') || 'light';
+  applyTheme(savedTheme);
+}
+
+window.addEventListener('load', loadTheme);
 
 window.addEventListener('load', renderWritingHistory);
 
