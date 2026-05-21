@@ -626,7 +626,27 @@ function insertTopic() {
     saveDraft();
   }
 }
+function showTags(mode, style, focus, importantOnly) {
+  const tags = [
+    mode,
+    style,
+    focus
+  ];
 
+  if (importantOnly) {
+    tags.push('Important mistakes only');
+  }
+
+  const container = document.getElementById('tags');
+  container.innerHTML = '';
+
+  tags.forEach(tag => {
+    const span = document.createElement('span');
+    span.className = 'tag';
+    span.textContent = tag;
+    container.appendChild(span);
+  });
+}
   </script>
 
 </body>
