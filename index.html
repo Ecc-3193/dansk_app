@@ -506,6 +506,42 @@
       font-size: 13px;
     }
 
+
+
+    .personal-dictionary-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0 16px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--soft);
+    }
+
+    .personal-dictionary-form .full-row {
+      grid-column: 1 / -1;
+    }
+
+    .personal-dictionary-form textarea {
+      min-height: 70px;
+    }
+
+    .personal-dictionary-form button {
+      width: auto;
+    }
+
+    .dictionary-badge {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1e40af;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
     @media (max-width: 760px) {
       body {
         padding: 14px;
@@ -516,6 +552,10 @@
       .feedback-grid,
       .learning-grid,
       .dictionary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .personal-dictionary-form {
         grid-template-columns: 1fr;
       }
 
@@ -673,7 +713,50 @@
 
     <section class="panel">
       <h2>Dictionary & Expressions</h2>
-      <p class="status">Search useful DU3/PD3 words and expressions. You can copy or insert them into your Danish text.</p>
+      <p class="status">Search useful DU3/PD3 words and expressions. You can copy or insert them into your Danish text. Add your own words and udtryk to build your personal Danish dictionary.</p>
+
+      <div class="personal-dictionary-form">
+        <div class="field">
+          <label for="personalType">Type</label>
+          <select id="personalType">
+            <option value="word">Word</option>
+            <option value="expression">Expression</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="personalCategory">Category</label>
+          <select id="personalCategory">
+            <option>Arbejde</option>
+            <option>Sprog</option>
+            <option>Bolig</option>
+            <option>Hverdag</option>
+            <option>Argumentation</option>
+            <option>PD3</option>
+            <option>My mistakes</option>
+            <option>Useful phrases</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="personalDa">Danish</label>
+          <input type="text" id="personalDa" placeholder="e.g. at lede efter" />
+        </div>
+        <div class="field">
+          <label for="personalPl">Polish / meaning</label>
+          <input type="text" id="personalPl" placeholder="e.g. szukać czegoś" />
+        </div>
+        <div class="field full-row">
+          <label for="personalExample">Example sentence</label>
+          <textarea id="personalExample" placeholder="e.g. Jeg leder efter et job i Danmark."></textarea>
+        </div>
+        <div class="field full-row">
+          <label for="personalNote">Note</label>
+          <input type="text" id="personalNote" placeholder="e.g. remember: efter, not for" />
+        </div>
+        <div class="full-row history-actions">
+          <button class="secondary" onclick="addPersonalDictionaryItem()">Add to my dictionary</button>
+          <button class="secondary" onclick="clearPersonalDictionaryForm()">Clear fields</button>
+        </div>
+      </div>
 
       <div class="dictionary-tools">
         <input type="text" id="dictionarySearch" placeholder="Search Danish, Polish, category..." oninput="renderDictionary()" />
@@ -818,7 +901,8 @@ window.addEventListener('load', function() {
   const data = {
     task: document.getElementById('task').value,
     answer: document.getElementById('answer').value,
-    history: JSON.parse(localStorage.getItem('writing_history') || '[]')
+    history: JSON.parse(localStorage.getItem('writing_history') || '[]'),
+    personalDictionary: JSON.parse(localStorage.getItem('personal_dictionary') || '[]')
   };
 
   const blob = new Blob(
@@ -848,8 +932,13 @@ function importData(event) {
       localStorage.setItem('writing_history', JSON.stringify(data.history));
     }
 
+    if (Array.isArray(data.personalDictionary)) {
+      localStorage.setItem('personal_dictionary', JSON.stringify(data.personalDictionary));
+    }
+
     saveDraft();
     renderWritingHistory();
+    renderDictionary();
     alert('Data imported!');
   };
 
@@ -1227,7 +1316,10 @@ function renderDictionary() {
   const type = document.getElementById('dictionaryType')?.value || 'all';
   const category = document.getElementById('dictionaryCategory')?.value || 'all';
 
-  const filtered = dictionaryItems.filter((item) => {
+  const personalDictionary = JSON.parse(localStorage.getItem('personal_dictionary') || '[]');
+  const allDictionaryItems = [...personalDictionary, ...dictionaryItems];
+
+  const filtered = allDictionaryItems.filter((item) => {
     const haystack = normalizeDictionaryText(`${item.da} ${item.pl} ${item.example} ${item.note} ${item.category}`);
     const typeOk = type === 'all' || item.type === type;
     const categoryOk = category === 'all' || item.category === category;
@@ -1248,6 +1340,12 @@ function renderDictionary() {
 
     const title = document.createElement('strong');
     title.textContent = item.da;
+    if (item.custom) {
+      const badge = document.createElement('span');
+      badge.className = 'dictionary-badge';
+      badge.textContent = 'MY';
+      title.appendChild(badge);
+    }
 
     const translation = document.createElement('div');
     translation.className = 'translation';
@@ -1280,6 +1378,14 @@ function renderDictionary() {
     actions.appendChild(insertButton);
     actions.appendChild(copyButton);
 
+    if (item.custom && item.id) {
+      const deleteButton = document.createElement('button');
+      deleteButton.className = 'danger';
+      deleteButton.textContent = 'Delete';
+      deleteButton.onclick = () => deletePersonalDictionaryItem(item.id);
+      actions.appendChild(deleteButton);
+    }
+
     card.appendChild(title);
     card.appendChild(translation);
     card.appendChild(example);
@@ -1288,6 +1394,52 @@ function renderDictionary() {
 
     list.appendChild(card);
   });
+}
+
+function addPersonalDictionaryItem() {
+  const type = document.getElementById('personalType').value;
+  const category = document.getElementById('personalCategory').value;
+  const da = document.getElementById('personalDa').value.trim();
+  const pl = document.getElementById('personalPl').value.trim();
+  const example = document.getElementById('personalExample').value.trim();
+  const note = document.getElementById('personalNote').value.trim();
+
+  if (!da || !pl) {
+    alert('Add at least the Danish word/expression and the meaning.');
+    return;
+  }
+
+  const personalDictionary = JSON.parse(localStorage.getItem('personal_dictionary') || '[]');
+  const item = {
+    id: Date.now().toString(),
+    custom: true,
+    type,
+    category,
+    da,
+    pl,
+    example: example || 'Add your own example sentence later.',
+    note: note || 'My personal dictionary item.'
+  };
+
+  personalDictionary.unshift(item);
+  localStorage.setItem('personal_dictionary', JSON.stringify(personalDictionary));
+  clearPersonalDictionaryForm();
+  renderDictionary();
+}
+
+function clearPersonalDictionaryForm() {
+  document.getElementById('personalDa').value = '';
+  document.getElementById('personalPl').value = '';
+  document.getElementById('personalExample').value = '';
+  document.getElementById('personalNote').value = '';
+}
+
+function deletePersonalDictionaryItem(id) {
+  if (!confirm('Delete this dictionary item?')) return;
+  let personalDictionary = JSON.parse(localStorage.getItem('personal_dictionary') || '[]');
+  personalDictionary = personalDictionary.filter((item) => item.id !== id);
+  localStorage.setItem('personal_dictionary', JSON.stringify(personalDictionary));
+  renderDictionary();
 }
 
 function insertDictionaryText(text) {
