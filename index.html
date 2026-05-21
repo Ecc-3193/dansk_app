@@ -570,6 +570,16 @@ function copyWriting(index) {
 
 window.addEventListener('load', renderWritingHistory);
 
+function insertTopic() {
+  const selectedTopic = document.getElementById('topicSelect').value;
+
+  if (selectedTopic) {
+    document.getElementById('task').value = selectedTopic;
+
+    saveDraft();
+  }
+}
+
   </script>
 
 </body>
